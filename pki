@@ -5,6 +5,7 @@ PKI for test
 
 import ipaddress
 import sys
+from collections import namedtuple
 from datetime import datetime, timedelta
 
 from cryptography import x509
@@ -12,6 +13,8 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.x509.oid import NameOID
+
+Cert = namedtuple("Cert", ["cert", "key"])
 
 
 def get_key(key_size=4096):
@@ -53,15 +56,16 @@ def write_certificate(name, certificate, append=False):
         ))
 
 
-def generate_ca(name, ca_cert=None, ca_key=None, pathlen=0):
+def generate_ca(name, ca=None, pathlen=0):  # pylint: disable=invalid-name
     """
     Generate CA
     """
     subject = x509.Name([
         x509.NameAttribute(NameOID.COMMON_NAME, name),
     ])
-    if ca_key is not None:
-        issuer = ca_cert.subject
+    if ca is not None:
+        issuer = ca.cert.subject
+        ca_key = ca.key
         key = get_key()
     else:
         # Self-signed certificate
@@ -87,10 +91,10 @@ def generate_ca(name, ca_cert=None, ca_key=None, pathlen=0):
         algorithm=hashes.SHA512(),
         backend=default_backend()
     )
-    return key, cert
+    return Cert(cert, key)
 
 
-def generate_cert(name, ca_cert, ca_key, client=False, ip_v4=None, ip_v6=None):
+def generate_cert(name, ca, client=False, ip_v4=None, ip_v6=None):  # pylint: disable=invalid-name
     """
     Generate client/server key & certificate
     """
@@ -110,7 +114,7 @@ def generate_cert(name, ca_cert, ca_key, client=False, ip_v4=None, ip_v6=None):
     cert = x509.CertificateBuilder().subject_name(
         subject
     ).issuer_name(
-        ca_cert.subject
+        ca.cert.subject
     ).public_key(
         key.public_key()
     ).serial_number(
@@ -129,29 +133,29 @@ def generate_cert(name, ca_cert, ca_key, client=False, ip_v4=None, ip_v6=None):
         x509.SubjectAlternativeName(subject_altnames),
         critical=True,
     ).sign(
-        private_key=ca_key,
+        private_key=ca.key,
         algorithm=hashes.SHA512(),
         backend=default_backend()
     )
-    return key, cert
+    return Cert(cert, key)
 
 
 def main():
     """
     Main function
     """
-    root_key, root_cert = generate_ca("root", pathlen=1)
-    ca_key, ca_cert = generate_ca("subca", root_cert, root_key, pathlen=0)
-    write_certificate("cacerts", ca_cert)
-    write_certificate("cacerts", root_cert, append=True)
+    root_ca = generate_ca("root", pathlen=1)
+    sub_ca = generate_ca("subca", root_ca, pathlen=0)
+    write_certificate("cacerts", sub_ca.cert)
+    write_certificate("cacerts", root_ca.cert, append=True)
 
-    key, cert = generate_cert("localhost", ca_cert, ca_key, ip_v4="127.0.0.1", ip_v6="::1")
-    write_private_key("server", key)
-    write_certificate("server", cert)
+    server = generate_cert("localhost", sub_ca, ip_v4="127.0.0.1", ip_v6="::1")
+    write_private_key("client", server.key)
+    write_certificate("client", server.cert)
 
-    key, cert = generate_cert("localhost", ca_cert, ca_key, ip_v4="127.0.0.1", ip_v6="::1", client=True)
-    write_private_key("client", key)
-    write_certificate("client", cert)
+    client = generate_cert("localhost", sub_ca, ip_v4="127.0.0.1", ip_v6="::1", client=True)
+    write_private_key("server", client.key)
+    write_certificate("server", client.cert)
 
 
 if __name__ == "__main__":

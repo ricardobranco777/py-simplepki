@@ -9,7 +9,7 @@ clean:
 
 test:
 	@pylint pki *.py
-	@flake8 pki *.py
+	@flake8 pki *.py --ignore=E501
 	@make generate
 	@make verify
 	@make clean
