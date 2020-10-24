@@ -7,4 +7,9 @@ Simple PKI to test TLS
 ## Requirements
 
 - Python 3.5+
-- [Python Cryptography](https://pypi.org/project/cryptography/])
+- [Python Cryptography](https://pypi.org/project/cryptography/)
+
+## Usage
+
+- `make generate`
+- `make clean`
