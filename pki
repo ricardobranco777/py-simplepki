@@ -150,12 +150,12 @@ def main():
     write_certificate("cacerts", root_ca.cert, append=True)
 
     server = generate_cert("localhost", sub_ca, ip_v4="127.0.0.1", ip_v6="::1")
-    write_private_key("client", server.key)
-    write_certificate("client", server.cert)
+    write_private_key("server", server.key)
+    write_certificate("server", server.cert)
 
     client = generate_cert("localhost", sub_ca, ip_v4="127.0.0.1", ip_v6="::1", client=True)
-    write_private_key("server", client.key)
-    write_certificate("server", client.cert)
+    write_private_key("client", client.key)
+    write_certificate("client", client.cert)
 
 
 if __name__ == "__main__":

@@ -2,7 +2,9 @@ generate:
 	@python3 pki
 
 verify:
-	@openssl verify -x509_strict -CAfile cacerts.pem client.pem server.pem cacerts.pem
+	@openssl verify -x509_strict -purpose sslclient -CAfile cacerts.pem client.pem
+	@openssl verify -x509_strict -purpose sslserver -CAfile cacerts.pem server.pem
+	@openssl verify -x509_strict -CAfile cacerts.pem cacerts.pem
 
 clean:
 	@rm -f *.pem *.key
