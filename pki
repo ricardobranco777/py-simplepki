@@ -45,15 +45,15 @@ def write_private_key(name, key, passphrase=None):
         )
 
 
-def write_certificate(name, certificate, append=False):
+def write_certificates(name, *certs):
     """
     Write certificate
     """
-    mode = "ab" if append else "wb"
-    with open("%s.pem" % name, mode) as file:
-        file.write(certificate.public_bytes(
-            encoding=serialization.Encoding.PEM,
-        ))
+    with open("%s.pem" % name, "wb") as file:
+        for cert in certs:
+            file.write(cert.public_bytes(
+                encoding=serialization.Encoding.PEM,
+            ))
 
 
 def generate_ca(name, ca=None, pathlen=0):  # pylint: disable=invalid-name
@@ -146,16 +146,15 @@ def main():
     """
     root_ca = generate_ca("root", pathlen=1)
     sub_ca = generate_ca("subca", root_ca, pathlen=0)
-    write_certificate("cacerts", sub_ca.cert)
-    write_certificate("cacerts", root_ca.cert, append=True)
+    write_certificates("cacerts", sub_ca.cert, root_ca.cert)
 
     server = generate_cert("localhost", sub_ca, ip_v4="127.0.0.1", ip_v6="::1")
     write_private_key("server", server.key)
-    write_certificate("server", server.cert)
+    write_certificates("server", server.cert)
 
     client = generate_cert("localhost", sub_ca, ip_v4="127.0.0.1", ip_v6="::1", client=True)
     write_private_key("client", client.key)
-    write_certificate("client", client.cert)
+    write_certificates("client", client.cert)
 
 
 if __name__ == "__main__":
