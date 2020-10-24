@@ -3,10 +3,10 @@
 PKI for test
 """
 
-import ipaddress
 import sys
 from collections import namedtuple
 from datetime import datetime, timedelta
+from ipaddress import ip_address
 
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
@@ -94,7 +94,7 @@ def generate_ca(name, ca=None, pathlen=0):  # pylint: disable=invalid-name
     return Cert(cert, key)
 
 
-def generate_cert(name, ca, client=False, ip_v4=None, ip_v6=None):  # pylint: disable=invalid-name
+def generate_cert(name, ca, alt_names=None, client=False):  # pylint: disable=invalid-name
     """
     Generate client/server key & certificate
     """
@@ -106,10 +106,12 @@ def generate_cert(name, ca, client=False, ip_v4=None, ip_v6=None):  # pylint: di
         x509.NameAttribute(NameOID.COMMON_NAME, name),
     ])
     subject_altnames = [x509.DNSName(name)]
-    if ip_v4:
-        subject_altnames.append(x509.IPAddress(ipaddress.IPv4Address(ip_v4)))
-    if ip_v6:
-        subject_altnames.append(x509.IPAddress(ipaddress.IPv6Address(ip_v6)))
+    if alt_names:
+        for alt_name in alt_names:
+            try:
+                subject_altnames.append(x509.IPAddress(ip_address(alt_name)))
+            except ValueError:
+                subject_altnames.append(x509.DNSName(alt_name))
     key = get_key()
     cert = x509.CertificateBuilder().subject_name(
         subject
@@ -148,11 +150,11 @@ def main():
     sub_ca = generate_ca("subca", root_ca, pathlen=0)
     write_certificates("cacerts", sub_ca.cert, root_ca.cert)
 
-    server = generate_cert("localhost", sub_ca, ip_v4="127.0.0.1", ip_v6="::1")
+    server = generate_cert("localhost", sub_ca, alt_names=["127.0.0.1", "::1"])
     write_private_key("server", server.key)
     write_certificates("server", server.cert)
 
-    client = generate_cert("localhost", sub_ca, ip_v4="127.0.0.1", ip_v6="::1", client=True)
+    client = generate_cert("localhost", sub_ca, alt_names=["127.0.0.1", "::1"], client=True)
     write_private_key("client", client.key)
     write_certificates("client", client.cert)
 
