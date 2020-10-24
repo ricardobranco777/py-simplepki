@@ -1,5 +1,5 @@
 generate:
-	@python3 pki
+	@python3 simplepki
 
 verify:
 	@openssl verify -x509_strict -purpose sslclient -CAfile cacerts.pem client.pem
@@ -10,8 +10,8 @@ clean:
 	@rm -f *.pem *.key
 
 test:
-	@pylint pki *.py
-	@flake8 pki *.py --ignore=E501
+	@pylint simplepki *.py
+	@flake8 simplepki *.py --ignore=E501
 	@make generate
 	@make verify
 	@make clean
