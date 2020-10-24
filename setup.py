@@ -31,7 +31,7 @@ setup(
     license='MIT License',
     zip_safe=False,
     keywords='simplepki',
-    scripts=['simplepki'],
+    scripts=['pki'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
