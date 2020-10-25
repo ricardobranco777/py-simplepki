@@ -10,7 +10,7 @@ clean:
 	@rm -f *.pem *.key
 
 test:
-	@pylint simplepki *.py
+	@pylint simplepki *.py --disable=invalid-name,too-many-arguments
 	@flake8 simplepki *.py --ignore=E501
 	@make generate
 	@make verify
