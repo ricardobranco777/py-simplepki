@@ -11,7 +11,6 @@ python:
 
 install:
   - pip install -r requirements-test.txt
-  - pip install .
 
 script:
   - make test
