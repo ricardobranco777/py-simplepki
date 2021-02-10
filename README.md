@@ -18,6 +18,6 @@ The output is:
 
 ## Requirements
 
-- Python 3.5+
+- Python 3.6+
 - [Python Cryptography](https://pypi.org/project/cryptography/)
 
