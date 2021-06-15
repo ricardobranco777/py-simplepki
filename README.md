@@ -2,7 +2,7 @@
 
 Simple PKI to test TLS.
 
-[![Build Status](https://travis-ci.org/ricardobranco777/simplepki.svg?branch=master)](https://travis-ci.org/ricardobranco777/simplepki)
+[![Build Status](https://travis-ci.com/ricardobranco777/simplepki.svg?branch=master)](https://travis-ci.org/ricardobranco777/simplepki)
 
 ## Usage
 
