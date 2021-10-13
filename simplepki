@@ -37,7 +37,7 @@ def write_private_key(name, key, passphrase=None):
         algorithm = serialization.BestAvailableEncryption(passphrase)
     else:
         algorithm = serialization.NoEncryption()
-    with open("%s.key" % name, "wb") as file:
+    with open(f"{name}.key", "wb") as file:
         file.write(key.private_bytes(
             encoding=serialization.Encoding.PEM,
             format=serialization.PrivateFormat.TraditionalOpenSSL,
@@ -49,7 +49,7 @@ def write_certificates(name, *certs):
     """
     Write certificate
     """
-    with open("%s.pem" % name, "wb") as file:
+    with open(f"{name}.pem", "wb") as file:
         for cert in certs:
             file.write(cert.public_bytes(
                 encoding=serialization.Encoding.PEM,
