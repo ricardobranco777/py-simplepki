@@ -188,11 +188,11 @@ def main():
     sub_ca = generate_ca("subca", root_ca, pathlen=0)
     write_certificates("cacerts", sub_ca.cert, root_ca.cert)
 
-    server = generate_cert("localhost", sub_ca, alt_names=["127.0.0.1"])
+    server = generate_cert("server", sub_ca, alt_names=("localhost", "127.0.0.1"))
     write_private_key("server", server.key)
     write_certificates("server", server.cert)
 
-    client = generate_cert("localhost", sub_ca, alt_names=["127.0.0.1"], client=True)
+    client = generate_cert("client", sub_ca, alt_names=("localhost", "127.0.0.1"), client=True)
     write_private_key("client", client.key)
     write_certificates("client", client.cert)
 
