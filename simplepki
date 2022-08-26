@@ -120,7 +120,7 @@ def generate_ca(
     return Cert(cert, key)
 
 
-def generate_cert(
+def generate_pair(
         name,
         ca,
         alt_names=None,
@@ -188,13 +188,11 @@ def main():
     sub_ca = generate_ca("subca", root_ca, pathlen=0)
     write_certificates("cacerts", sub_ca.cert, root_ca.cert)
 
-    server = generate_cert("server", sub_ca, alt_names=("localhost", "127.0.0.1"))
-    write_private_key("server", server.key)
-    write_certificates("server", server.cert)
-
-    client = generate_cert("client", sub_ca, alt_names=("localhost", "127.0.0.1"), client=True)
-    write_private_key("client", client.key)
-    write_certificates("client", client.cert)
+    for host in ("client", "server"):
+        alt_names = ("localhost", "127.0.0.1")
+        pair = generate_pair(host, sub_ca, alt_names=alt_names, client=host == "client")
+        write_private_key(host, pair.key)
+        write_certificates(host, pair.cert)
 
 
 if __name__ == "__main__":
