@@ -189,7 +189,7 @@ def main():
     write_certificates("cacerts", sub_ca.cert, root_ca.cert)
 
     for host in ("client", "server"):
-        alt_names = ("localhost", "127.0.0.1")
+        alt_names = ("localhost", "127.0.0.1", "::1")
         pair = generate_pair(host, sub_ca, alt_names=alt_names, client=host == "client")
         write_private_key(host, pair.key)
         write_certificates(host, pair.cert)
