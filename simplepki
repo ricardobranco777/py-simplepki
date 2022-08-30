@@ -3,6 +3,7 @@
 PKI for test
 """
 
+import os
 import sys
 from collections import namedtuple
 from datetime import datetime, timedelta
@@ -15,6 +16,13 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.x509.oid import NameOID
 
 Cert = namedtuple("Cert", ["cert", "key"])
+
+
+def opener(path, flags):
+    """
+    Helper function to create files with desired mode
+    """
+    return os.open(path, flags, 0o640)
 
 
 def get_key(key_size=4096):
@@ -37,7 +45,7 @@ def write_private_key(name, key, passphrase=None):
         algorithm = serialization.BestAvailableEncryption(passphrase)
     else:
         algorithm = serialization.NoEncryption()
-    with open(f"{name}.key", "wb") as file:
+    with open(f"{name}.key", "wb", opener=opener) as file:
         file.write(key.private_bytes(
             encoding=serialization.Encoding.PEM,
             format=serialization.PrivateFormat.TraditionalOpenSSL,
@@ -49,7 +57,7 @@ def write_certificates(name, *certs):
     """
     Write certificate
     """
-    with open(f"{name}.pem", "wb") as file:
+    with open(f"{name}.pem", "wb", opener=opener) as file:
         for cert in certs:
             file.write(cert.public_bytes(
                 encoding=serialization.Encoding.PEM,
