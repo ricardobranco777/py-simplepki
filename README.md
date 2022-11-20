@@ -2,8 +2,6 @@
 
 Simple PKI to test TLS.
 
-[![Build Status](https://travis-ci.com/ricardobranco777/simplepki.svg?branch=master)](https://travis-ci.org/ricardobranco777/simplepki)
-
 ## Usage
 
 - `make generate`
@@ -21,3 +19,6 @@ The output is:
 - Python 3.6+
 - [Python Cryptography](https://pypi.org/project/cryptography/)
 
+## Notes
+
+Go version: https://github.com/ricardobranco777/simplepki

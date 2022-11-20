@@ -22,7 +22,7 @@ setup(
     long_description_content_type="text/markdown",
     author="Ricardo Branco",
     author_email='rbranco@suse.de',
-    url='https://github.com/ricardobranco777/simplepki',
+    url='https://github.com/ricardobranco777/py-simplepki',
     package_dir={'simplepki': '.'},
     # packages=find_packages(),
     include_package_data=True,
