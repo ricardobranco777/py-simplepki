@@ -1,3 +1,5 @@
+![Build Status](https://github.com/ricardobranco777/py-simplepki/actions/workflows/ci.yml/badge.svg)
+
 # simplepki
 
 Simple PKI to test TLS.
@@ -16,7 +18,7 @@ The output is:
 
 ## Requirements
 
-- Python 3.6+
+- Tested on Python 3.8+
 - [Python Cryptography](https://pypi.org/project/cryptography/)
 
 ## Notes
