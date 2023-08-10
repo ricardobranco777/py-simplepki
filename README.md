@@ -4,6 +4,12 @@
 
 Simple PKI to test TLS.
 
+## Installation
+
+Add `https://github.com/ricardobranco777/py-simplepki/archive/master.zip` to `requirements.txt` or run:
+
+`pip install --user https://github.com/ricardobranco777/py-simplepki/archive/master.zip`
+
 ## Usage
 
 - `make generate`
