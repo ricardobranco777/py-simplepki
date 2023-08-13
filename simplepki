@@ -8,6 +8,7 @@ import sys
 from collections import namedtuple
 from datetime import datetime, timedelta
 from ipaddress import ip_address
+from typing import List, Optional, Union
 
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
@@ -18,7 +19,7 @@ from cryptography.x509.oid import NameOID
 Cert = namedtuple("Cert", ["cert", "key"])
 
 
-def opener(path, flags):
+def opener(path: str, flags: int) -> int:
     """
     Helper function to create files with desired mode
     """
@@ -38,13 +39,13 @@ def get_key(key_size=None):
     )
 
 
-def write_private_key(name, key, passphrase=None):
+def write_private_key(name: str, key, passphrase: Optional[str] = None) -> None:
     """
     Write key, optionally encrypted with passphrase
     """
+    algorithm: Union[serialization.NoEncryption, serialization.BestAvailableEncryption]
     if passphrase is not None:
-        passphrase = bytes(passphrase, encoding="utf-8")
-        algorithm = serialization.BestAvailableEncryption(passphrase)
+        algorithm = serialization.BestAvailableEncryption(bytes(passphrase, encoding="utf-8"))
     else:
         algorithm = serialization.NoEncryption()
     with open(f"{name}.key", "wb", opener=opener) as file:
@@ -55,7 +56,7 @@ def write_private_key(name, key, passphrase=None):
         )
 
 
-def write_certificates(name, *certs):
+def write_certificates(name: str, *certs):
     """
     Write certificate
     """
@@ -67,11 +68,12 @@ def write_certificates(name, *certs):
 
 
 def generate_ca(
-        name,
-        ca=None,
-        pathlen=0,
-        not_before=datetime.utcnow() - timedelta(days=1),
-        not_after=datetime.utcnow() + timedelta(days=3)):
+    name: str,
+    ca: Optional[Cert] = None,
+    pathlen: int = 0,
+    not_before: datetime = datetime.utcnow() - timedelta(days=1),
+    not_after: datetime = datetime.utcnow() + timedelta(days=3),
+) -> Cert:
     """
     Generate CA
     """
@@ -131,12 +133,13 @@ def generate_ca(
 
 
 def generate_pair(
-        name,
-        ca,
-        alt_names=None,
-        not_before=datetime.utcnow() - timedelta(days=1),
-        not_after=datetime.utcnow() + timedelta(days=3),
-        client=False):
+    name: str,
+    ca: Cert,
+    alt_names=Optional[List[str]],
+    not_before: datetime = datetime.utcnow() - timedelta(days=1),
+    not_after: datetime = datetime.utcnow() + timedelta(days=3),
+    client: bool = False,
+) -> Cert:
     """
     Generate client/server key & certificate
     """
@@ -147,7 +150,7 @@ def generate_pair(
     subject = x509.Name([
         x509.NameAttribute(NameOID.COMMON_NAME, name),
     ])
-    subject_altnames = [x509.DNSName(name)]
+    subject_altnames: List[Union[x509.DNSName, x509.IPAddress]] = [x509.DNSName(name)]
     if alt_names:
         for alt_name in alt_names:
             try:

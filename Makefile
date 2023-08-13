@@ -2,7 +2,7 @@ BIN=simplepki
 FILES=$(BIN)
 
 .PHONY: all
-all: flake8 pylint generate verify clean
+all: flake8 pylint mypy generate verify clean
 
 .PHONY: generate
 generate:
@@ -21,6 +21,10 @@ flake8:
 .PHONY: pylint
 pylint:
 	@pylint $(FILES) --disable=invalid-name,too-many-arguments
+
+.PHONY: mypy
+mypy:
+	@mypy $(FILES)
 
 .PHONY: clean
 clean:
