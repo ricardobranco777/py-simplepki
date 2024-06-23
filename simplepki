@@ -6,7 +6,7 @@ PKI for test
 import os
 import sys
 from collections import namedtuple
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from ipaddress import ip_address
 from typing import List, Optional, Union
 
@@ -75,8 +75,8 @@ def generate_ca(
     name: str,
     ca: Optional[Cert] = None,
     pathlen: int = 0,
-    not_before: datetime = datetime.utcnow() - timedelta(days=1),
-    not_after: datetime = datetime.utcnow() + timedelta(days=3),
+    not_before: datetime = datetime.now(timezone.utc) - timedelta(days=1),
+    not_after: datetime = datetime.now(timezone.utc) + timedelta(days=3),
 ) -> Cert:
     """
     Generate CA
@@ -139,8 +139,8 @@ def generate_pair(
     name: str,
     ca: Cert,
     alt_names=Optional[List[str]],
-    not_before: datetime = datetime.utcnow() - timedelta(days=1),
-    not_after: datetime = datetime.utcnow() + timedelta(days=3),
+    not_before: datetime = datetime.now(timezone.utc) - timedelta(days=1),
+    not_after: datetime = datetime.now(timezone.utc) + timedelta(days=3),
     client: bool = False,
 ) -> Cert:
     """
