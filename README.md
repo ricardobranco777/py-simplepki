@@ -24,7 +24,7 @@ The output is:
 
 ## Requirements
 
-- Tested on Python 3.8+
+- Tested on Python 3.9+
 - [Python Cryptography](https://pypi.org/project/cryptography/)
 
 ## Notes
